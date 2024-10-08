@@ -23,6 +23,8 @@ from movie_app.views import (
     MovieDetail,
     ReviewList,
     ReviewDetail,
+    MoviesWithReviews,
+    DirectorsWithMoviesCount
 )
 
 urlpatterns = [
@@ -33,6 +35,8 @@ urlpatterns = [
     path('api/v1/movies/<int:id>/', MovieDetail.as_view(), name='movie-detail'),
     path('api/v1/reviews/', ReviewList.as_view(), name='review-list'),
     path('api/v1/reviews/<int:id>/', ReviewDetail.as_view(), name='review-detail'),
+    path('api/v1/movies/reviews/', MoviesWithReviews.as_view(), name='movies-with-reviews'),
+    path('api/v1/directors/', DirectorsWithMoviesCount.as_view(), name='directors-with-movies-count'),
 ]
 
 
