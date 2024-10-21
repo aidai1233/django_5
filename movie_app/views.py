@@ -1,16 +1,16 @@
-from django.shortcuts import render
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg
-from rest_framework import generics, status
-from django.contrib.auth.models import User
+from django.db.models import Avg, Count
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from .models import Director, Movie, Review, ConfirmationCode
 from .serializers import (
     DirectorSerializer, MovieSerializer, ReviewSerializer, MovieWithReviewsSerializer, RegisterSerializer,
     ConfirmUserSerializer
 )
+
 
 class DirectorList(generics.ListCreateAPIView):
     queryset = Director.objects.all()
@@ -42,20 +42,20 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
 
 
-class MoviesWithReviews(APIView):
-    def get(self, request):
-        movies = Movie.objects.prefetch_related('reviews').all()
+class MoviesWithReviews(generics.ListAPIView):
+    queryset = Movie.objects.prefetch_related('reviews').all()
+    serializer_class = MovieWithReviewsSerializer
+
+    def get_queryset(self):
+        movies = super().get_queryset()
         for movie in movies:
             movie.avg_rating = movie.reviews.aggregate(Avg('stars'))['stars__avg']
-        serializer = MovieWithReviewsSerializer(movies, many=True)
-        return Response(serializer.data)
+        return movies
 
 
-class DirectorsWithMoviesCount(APIView):
-    def get(self, request):
-        directors = Director.objects.annotate(movies_count=Count('movies'))
-        serializer = DirectorSerializer(directors, many=True)
-        return Response(serializer.data)
+class DirectorsWithMoviesCount(generics.ListAPIView):
+    queryset = Director.objects.annotate(movies_count=Count('movies'))
+    serializer_class = DirectorSerializer
 
 
 class RegisterView(APIView):
