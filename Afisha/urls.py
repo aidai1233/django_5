@@ -24,7 +24,10 @@ from movie_app.views import (
     ReviewList,
     ReviewDetail,
     MoviesWithReviews,
-    DirectorsWithMoviesCount
+    DirectorsWithMoviesCount,
+    RegisterView,
+    ConfirmUserView,
+    LoginView
 )
 
 urlpatterns = [
@@ -37,6 +40,10 @@ urlpatterns = [
     path('api/v1/reviews/<int:id>/', ReviewDetail.as_view(), name='review-detail'),
     path('api/v1/movies/reviews/', MoviesWithReviews.as_view(), name='movies-with-reviews'),
     path('api/v1/directors/', DirectorsWithMoviesCount.as_view(), name='directors-with-movies-count'),
+    path('api/v1/users/register/', RegisterView.as_view(), name='register'),
+    path('api/v1/users/confirm/', ConfirmUserView.as_view(), name='confirm-user'),
+    path('api/v1/users/login/', LoginView.as_view(), name='login'),
+
 ]
 
 
