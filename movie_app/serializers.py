@@ -3,11 +3,14 @@ from .models import Director, Movie, Review
 
 
 class DirectorSerializer(serializers.ModelSerializer):
-    movies_count = serializers.IntegerField(read_only=True)
-
     class Meta:
         model = Director
-        fields = ['id', 'name', 'movies_count']
+        fields = '__all__'
+
+    def validate_name(self, value):
+        if len(value) < 3:
+            raise serializers.ValidationError("Имя режиссера должно содержать не менее 3 символов.")
+        return value
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -15,11 +18,21 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = '__all__'
 
+    def validate_duration(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Продолжительность фильма должна быть положительной.")
+        return value
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+
+    def validate_stars(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Рейтинг отзыва должен быть в диапазоне от 1 до 5.")
+        return value
 
 
 class MovieWithReviewsSerializer(serializers.ModelSerializer):
